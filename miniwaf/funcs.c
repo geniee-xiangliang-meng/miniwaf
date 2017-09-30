@@ -3,6 +3,8 @@ void usage() {
         "usage:\n\t./miniwaf -e INPUT_NGINX_ERROR_LOG -d OUTPUT_NGINX_DENY_CONF -r RULE_FILE\n\n"
         "for example:\n"
         "\t./miniwaf -e /usr/local/nginx/logs/error.log -d /usr/local/nginx/conf/deny.conf -r /usr/local/miniwaf.conf"
+        "\n\ntips:\n"
+        "\tYou also can use an access_log in -e, it will detect 404 error and deny the ip if rule is matched"
         "\n\n"
     );
 }
@@ -34,17 +36,27 @@ void process_mmap() {
         char line[NGX_MAX_ERROR_STR] = "";
         strncat(line, ptr_first, len);
 
+        char ip[16] = "";
+        // if -e is error_log
         if (strstr(line, "[error]") &&
             (ptr_ip = strstr(line, "client: ")) &&
             strstr(line, "access forbidden by rule") == NULL) {
 
-            char ip[16] = "";
             if (sscanf(ptr_ip, "client: %[0-9.]s", ip) && strlen(ip) &&
                 (ip_addr = inet_addr(ip)) > 0 && !is_denied_ip(ip_addr) &&
                 rule_matched(line)) {
 
                 append_ip_to_denied_conf(ip_addr, ip);
-				fprintf(stderr, "append: %s\n", ip);
+                fprintf(stderr, "append: %s\n", ip);
+            }
+        // we can use access_log too
+        } else if (strstr(line, " 404 ")) {
+            sscanf(line, "%[0-9.]s - ", ip);
+            if (strlen(ip) && (ip_addr = inet_addr(ip)) > 0 &&
+                !is_denied_ip(ip_addr) && rule_matched(line)) {
+
+                append_ip_to_denied_conf(ip_addr, ip);
+                fprintf(stderr, "append: %s\n", ip);
             }
         }
 
