@@ -6,6 +6,7 @@
 char *map = NULL,
      *ngx_error_log = NULL,
      *ngx_deny_conf = NULL,
+     *ngx_bin_path = NULL,
      *rule_file = NULL;
 
 unsigned long

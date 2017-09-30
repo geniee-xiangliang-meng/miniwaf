@@ -19,7 +19,7 @@
 
 int main(int argc,char *argv[]) {
     int opt;
-    while ((opt = getopt(argc, argv, "e:d:r:p:")) != -1) {
+    while ((opt = getopt(argc, argv, "e:d:r:p:b:")) != -1) {
         switch (opt) {
             case 'e':
                 ngx_error_log = strdup(optarg);
@@ -29,6 +29,9 @@ int main(int argc,char *argv[]) {
                 break;
             case 'r':
                 rule_file = strdup(optarg);
+                break;
+            case 'b':
+                ngx_bin_path = strdup(optarg);
                 break;
             default:
                 usage();
@@ -59,7 +62,13 @@ int main(int argc,char *argv[]) {
 
     if (denied_ips_idx - old_denied_ips_idx > 0) {
         fprintf(stderr, "reload nginx\n");
-        system(NGX_RELOAD_CMD);
+        if (ngx_bin_path) {
+            char ngx_reload_cmd[1024]="";
+            sprintf(ngx_reload_cmd, "%s -s reload", ngx_bin_path);
+            system(ngx_reload_cmd);
+        } else {
+            system(NGX_RELOAD_CMD);
+        }
     }
 
     free(ngx_error_log);
