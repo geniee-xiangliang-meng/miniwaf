@@ -57,6 +57,9 @@ int main(int argc,char *argv[]) {
 
         process_mmap();
         munmap(map, mapsize);
+    } else {
+        // reset pos file
+        ngx_error_log_processed_position = 0;
     }
     close_all();
 
