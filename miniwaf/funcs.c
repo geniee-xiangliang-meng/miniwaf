@@ -9,7 +9,7 @@ void usage() {
         "\t-r rule file of miniwaf.\n"
         "\t-b path of nginx bin file. default is /usr/local/nginx/sbin/nginx\n"
         "\n\ntips:\n"
-        "\tYou also can use an access_log in -e, it will detect 404 error and deny the ip if rule is matched"
+        "\tYou also can use an access_log in -e, it will detect 40x error and deny the ip if rule is matched"
         "\n\n"
     );
 }
@@ -55,7 +55,11 @@ void process_mmap() {
                 fprintf(stderr, "append: %s\n", ip);
             }
         // we can use access_log too
-        } else if (strstr(line, " 404 ")) {
+        } else if (
+            strstr(line, " 404 ") ||
+            strstr(line, " 401 ") ||
+            strstr(line, " 403 ")
+        ) {
             sscanf(line, "%[0-9.]s - ", ip);
             if (strlen(ip) && (ip_addr = inet_addr(ip)) > 0 &&
                 !is_denied_ip(ip_addr) && rule_matched(line)) {
