@@ -39,14 +39,14 @@ int init() {
         return 1;
     }
     if ((pos_file_fp = fopen(POS_FILE, "r")) == NULL) {
-		if ((pos_file_fp = fopen(POS_FILE, "w")) == NULL) {
+        if ((pos_file_fp = fopen(POS_FILE, "w")) == NULL) {
             fprintf(stderr, "open POS_FILE failed (use w+ mode)\n");
             return 1;
-		} else {
-			fprintf(pos_file_fp, "%d", 0);
-			fclose(pos_file_fp);
-			pos_file_fp = fopen(POS_FILE, "r");
-		}
+        } else {
+            fprintf(pos_file_fp, "%d", 0);
+            fclose(pos_file_fp);
+            pos_file_fp = fopen(POS_FILE, "r");
+        }
     }
 
     // try open error_log_file
@@ -62,10 +62,10 @@ int init() {
     ngx_error_log_filelen = (unsigned long)st.st_size;
     mapsize = (ngx_error_log_filelen / pagesize + 1) * pagesize;
 
-	int tmp_ngx_error_log_processed_position = 0;
-	if (fscanf(pos_file_fp, "%d", &tmp_ngx_error_log_processed_position) != EOF) {
-		ngx_error_log_processed_position = tmp_ngx_error_log_processed_position;
-	}
+    int tmp_ngx_error_log_processed_position = 0;
+    if (fscanf(pos_file_fp, "%d", &tmp_ngx_error_log_processed_position) != EOF) {
+        ngx_error_log_processed_position = tmp_ngx_error_log_processed_position;
+    }
 
     return 0;
 }

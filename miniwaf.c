@@ -43,9 +43,9 @@ int main(int argc,char *argv[]) {
         return 1;
     }
 
-	if (init()) return 1;
-	if (preload_rules()) return 1;
-	if (preload_deny_conf()) return 1;
+    if (init()) return 1;
+    if (preload_rules()) return 1;
+    if (preload_deny_conf()) return 1;
 
     int old_denied_ips_idx = denied_ips_idx;
     if (ngx_error_log_filelen > 0) {
