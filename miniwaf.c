@@ -71,6 +71,8 @@ int main(int argc,char *argv[]) {
         }
     }
 
+    update_pos_file();
+
     free(ngx_error_log);
     free(ngx_deny_conf);
     free(rule_file);

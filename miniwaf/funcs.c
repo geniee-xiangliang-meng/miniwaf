@@ -78,3 +78,11 @@ void process_mmap() {
         }
     }
 }
+
+void update_pos_file() {
+    FILE *upd_pos_file_fp;
+    if ((upd_pos_file_fp = fopen(POS_FILE, "w")) != NULL) {
+        fprintf(upd_pos_file_fp, "%d", ngx_error_log_processed_position);
+        fclose(upd_pos_file_fp);
+    } 
+}
